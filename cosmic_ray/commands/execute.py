@@ -3,6 +3,7 @@ import cosmic_ray.tasks.worker
 from cosmic_ray.work_db import use_db, WorkDB
 from cosmic_ray.work_record import WorkRecord
 
+
 # TODO: These should be put into plugins. Callers of execute() should pass an
 # executor.
 
@@ -15,7 +16,7 @@ def local_executor(timeout, pending_work, config):
             config)
 
 
-class CeleryExecutor:
+class CeleryExecutor:  # pylint: disable=too-few-public-methods
     def __init__(self, purge_queue=True):
         self.purge_queue = purge_queue
 
@@ -26,8 +27,8 @@ class CeleryExecutor:
                 pending_work,
                 config)
 
-            for r in results:
-                yield WorkRecord(r.get())
+            for result in results:
+                yield WorkRecord(result.get())
         finally:
             if self.purge_queue:
                 cosmic_ray.tasks.celery.app.control.purge()

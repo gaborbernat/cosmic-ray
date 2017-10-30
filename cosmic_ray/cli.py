@@ -8,7 +8,6 @@ import json
 import logging
 import os
 import pprint
-import subprocess
 import sys
 
 import docopt_subcommands as dsc
@@ -98,13 +97,11 @@ will be stored.
         baseline_mult = float(config['baseline'])
         # TODO: Should not be assertion
         assert baseline_mult is not None
-        command = 'cosmic-ray baseline {}'.format(
+        command = 'baseline {}'.format(
             args['<config-file>'])
 
-        # We run the baseline in a subprocess to more closely emulate the
-        # runtime of a worker subprocess.
         with Timer() as timer:
-            subprocess.check_call(command.split())
+            main(command.split())
 
         timeout = baseline_mult * timer.elapsed.total_seconds()
     else:
@@ -285,13 +282,14 @@ def main(argv=None):
 
     :param argv: the command line arguments
     """
-    dsc.main(
+    return dsc.main(
         'cosmic-ray',
         'cosmic-ray v.2',
         argv=argv,
         doc_template=DOC_TEMPLATE,
-        common_option_handler=common_option_handler)
+        common_option_handler=common_option_handler,
+        exit_at_end=False)
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
